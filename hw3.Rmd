@@ -50,14 +50,14 @@ accel_data = read_csv(file = "accel_data/accel_data.csv") %>%
            day ==  "Friday" ~ "weekday"
            
     )) %>%
-  select(., week, day_id, day, weekday_weekend, everything()) %>%
-  mutate(., total_activity = rowSums(accel_data[,5:1444])) 
-    
-  
+  select(., week, day_id, day, weekday_weekend, everything())  %>%
+  mutate(., total_activity = rowSums(.[5:1443], na.rm = TRUE)) %>% 
+  select(., week, day_id, day, weekday_weekend, total_activity, everything())
 ```
 ```{r}
+accel_table = select(accel_data, day_id, total_activity)
+  
 
-  accel_data1 = mutate(accel_data, total_activity = sum(5:1444))
 
 ```
 
