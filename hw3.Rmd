@@ -57,7 +57,11 @@ accel_data = read_csv(file = "accel_data/accel_data.csv") %>%
 ```{r}
 accel_table = select(accel_data, day_id, total_activity)
   
+```
 
-
+```{r}
+accel_data1 = pivot_longer(accel_data, activity_1:activity_1440, names_to = "activity_types", 
+                           values_to = "score")  
+  
 ```
 
