@@ -65,3 +65,12 @@ accel_data1 = pivot_longer(accel_data, activity_1:activity_1440, names_to = "act
   
 ```
 
+```{r}
+plot = ggplot(accel_data1, aes(x = activity_types, y = score, color = day_id)) + geom_point(alpha = .5) +
+geom_smooth(se = FALSE) + 
+facet_grid(. ~ day_id)
+```
+
+
+
+
