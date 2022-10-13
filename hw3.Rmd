@@ -83,6 +83,8 @@ library(p8105.datasets)
 
 ```{r}
 nynoaadat_data = read_csv(file = "nynoaadat/nynoaadat.csv") %>%
-  janitor::clean_names() 
+  janitor::clean_names() %>% 
+  separate(., col = date, into = c('year', 'month', 'day')) 
+  
 ```
 
