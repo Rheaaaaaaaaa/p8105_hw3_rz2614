@@ -32,5 +32,32 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ```{r}
 library(tidyverse)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+accel_data = read_csv(file = "accel_data/accel_data.csv") %>%
+  janitor::clean_names()  %>% 
+  mutate(
+    weekday_weekend = case_when(
+      day ==  "Sunday" ~ "weekend",
+       day ==  "Saturday" ~ "weekend",
+       day ==  "Monday" ~ "weekday",
+        day ==  "Tuesday" ~ "weekday",
+         day ==  "Wednesday" ~ "weekday",
+          day ==  "Thursday" ~ "weekday",
+           day ==  "Friday" ~ "weekday"
+           
+    )) %>%
+  select(., week, day_id, day, weekday_weekend, everything()) %>%
+  mutate(., total_activity = rowSums(accel_data[,5:1444])) 
+    
+  
+```
+```{r}
+
+  accel_data1 = mutate(accel_data, total_activity = sum(5:1444))
+
 ```
 
