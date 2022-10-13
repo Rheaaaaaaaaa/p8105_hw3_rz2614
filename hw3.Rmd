@@ -71,6 +71,14 @@ geom_smooth(se = FALSE) +
 facet_grid(. ~ day_id)
 ```
 
+```{r}
+devtools::install_github("p8105/p8105.datasets", force = TRUE)
 
+
+```
+
+```{r}
+library(p8105.datasets)
+```
 
 
