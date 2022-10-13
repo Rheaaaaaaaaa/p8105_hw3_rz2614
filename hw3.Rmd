@@ -81,4 +81,8 @@ devtools::install_github("p8105/p8105.datasets", force = TRUE)
 library(p8105.datasets)
 ```
 
+```{r}
+nynoaadat_data = read_csv(file = "nynoaadat/nynoaadat.csv") %>%
+  janitor::clean_names() 
+```
 
