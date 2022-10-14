@@ -55,7 +55,11 @@ accel_data = read_csv(file = "accel_data/accel_data.csv") %>%
   select(., week, day_id, day, weekday_weekend, total_activity, everything())
 ```
 ```{r}
-accel_table = select(accel_data, day_id, total_activity)
+accel_table = accel_data %>% 
+  group_by(accel_data$day_id, accel_data$total_activity) %>% 
+  summarize(
+  )
+
   
 ```
 
@@ -66,7 +70,7 @@ accel_data1 = pivot_longer(accel_data, activity_1:activity_1440, names_to = "act
 ```
 
 ```{r}
-plot = ggplot(accel_data1, aes(x = activity_types, y = score, color = day_id)) + geom_point(alpha = .5) +
+plot = ggplot(accel_data1, aes(x = activity_types, y = score, color = day)) + geom_point(alpha = .5) +
 geom_smooth(se = FALSE) + 
 facet_grid(. ~ day_id)
 ```
@@ -82,9 +86,18 @@ library(p8105.datasets)
 ```
 
 ```{r}
+install.packages("grid")                   
+library("grid")
+```
+
+
+```{r}
 nynoaadat_data = read_csv(file = "nynoaadat/nynoaadat.csv") %>%
   janitor::clean_names() %>% 
-  separate(., col = date, into = c('year', 'month', 'day')) 
+  separate(., col = date, into = c('year', 'month', 'day')) %>% 
+  mutate(., prcp = prcp / 10)
+  
   
 ```
 
+  
