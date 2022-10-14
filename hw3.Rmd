@@ -34,6 +34,7 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 library(tidyverse)
 library(dplyr)
 library(tidyr)
+library(patchwork)
 ```
 
 ```{r}
@@ -85,19 +86,24 @@ devtools::install_github("p8105/p8105.datasets", force = TRUE)
 library(p8105.datasets)
 ```
 
-```{r}
-install.packages("grid")                   
-library("grid")
-```
-
 
 ```{r}
 nynoaadat_data = read_csv(file = "nynoaadat/nynoaadat.csv") %>%
   janitor::clean_names() %>% 
   separate(., col = date, into = c('year', 'month', 'day')) %>% 
-  mutate(., prcp = prcp / 10)
+  mutate(., prcp = prcp / 10) %>% 
+  mutate(month = as.numeric(month))
   
   
 ```
+```{r}
+nynoaadat_data1 = filter(nynoaadat_data, month == 01 | month == 07)
+```
 
+
+```{r}
+nynoaadat_data %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point(aes(color = month), alpha = 0.5)
+```
   
