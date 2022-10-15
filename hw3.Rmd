@@ -72,8 +72,7 @@ accel_data1 = pivot_longer(accel_data, activity_1:activity_1440, names_to = "act
 
 ```{r}
 plot = ggplot(accel_data1, aes(x = activity_types, y = score, color = day)) + geom_point(alpha = .5) +
-geom_smooth(se = FALSE) + 
-facet_grid(. ~ day_id)
+geom_line()
 ```
 
 ```{r}
@@ -84,26 +83,67 @@ devtools::install_github("p8105/p8105.datasets", force = TRUE)
 
 ```{r}
 library(p8105.datasets)
+data("ny_noaa")
 ```
 
 
 ```{r}
-nynoaadat_data = read_csv(file = "nynoaadat/nynoaadat.csv") %>%
+nynoaadat_data = ny_noaa %>%
   janitor::clean_names() %>% 
   separate(., col = date, into = c('year', 'month', 'day')) %>% 
   mutate(., prcp = prcp / 10) %>% 
-  mutate(month = as.numeric(month))
+  mutate(month = as.character(month)) %>% 
+  mutate(id = as.character(id),tmax=as.numeric(tmax),tmin=as.numeric(tmin))
   
   
 ```
+
 ```{r}
-nynoaadat_data1 = filter(nynoaadat_data, month == 01 | month == 07)
+nynoaadat_data1 = select(nynoaadat_data, id, year, month, tmax) %>% 
+  filter(month == "01") %>% 
+  drop_na(tmax)
 ```
 
 
 ```{r}
-nynoaadat_data %>% 
-  ggplot(aes(x = tmin, y = tmax)) +
-  geom_point(aes(color = month), alpha = 0.5)
+  pic1=
+  nynoaadat_data1 %>%
+  group_by(year, id) %>% 
+  summarize(
+    tmax_mean=mean(tmax)
+  )               %>%
+  ggplot(aes(x=year,y=tmax_mean))+geom_point(color = "pink") +
+  labs(
+    title = "Temperature plot",
+    x = "year",
+    y = "average maximum temperature",
+    caption = "Data from RNOAA"
+  )
+ 
+```
+
+```{r}
+nynoaadat_data2 = select(nynoaadat_data, id, year, month, tmax) %>% 
+  filter(month == "07") %>% 
+  drop_na(tmax)
+```
+ 
+```{r}
+ pic2=
+  nynoaadat_data1 %>%
+  group_by(year, id) %>% 
+  summarize(
+    tmax_mean=mean(tmax)
+  )               %>%
+  ggplot(aes(x=year,y=tmax_mean))+geom_point(color = "purple") +
+  labs(
+    title = "Temperature plot",
+    x = "year",
+    y = "average maximum temperature",
+    caption = "Data from RNOAA"
+  )
+```
+```{r}
+pic1 + pic2
 ```
   
