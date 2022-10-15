@@ -2,7 +2,7 @@
 title: "Untitled"
 author: "Ruihan Zhang"
 date: "2022-10-13"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -130,7 +130,7 @@ nynoaadat_data2 = select(nynoaadat_data, id, year, month, tmax) %>%
  
 ```{r}
  pic2=
-  nynoaadat_data1 %>%
+  nynoaadat_data2 %>%
   group_by(year, id) %>% 
   summarize(
     tmax_mean=mean(tmax)
@@ -147,3 +147,24 @@ nynoaadat_data2 = select(nynoaadat_data, id, year, month, tmax) %>%
 pic1 + pic2
 ```
   
+```{r}
+part1 = nynoaadat_data %>% 
+  ggplot(aes(x = tmin, y = tmax)) + 
+  geom_hex () +
+  labs(
+    title = "Temperature plot",
+    x = "Minimum temperature (C)",
+    y = "Maxiumum temperature (C)",
+    caption = "Data RNOAA"
+  )
+```
+
+```{r}
+part2 = nynoaadat_data %>% 
+  filter(snow > 0 & snow < 100) %>%
+  ggplot(aes(x = snow, fill = year)) + 
+  geom_density(alpha = 0.3, adjust = 0.5, color='steelblue')
+
+part1+part2
+```
+
