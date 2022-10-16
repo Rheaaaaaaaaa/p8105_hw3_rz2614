@@ -38,7 +38,7 @@ library(patchwork)
 ```
 
 ```{r}
-accel_data = read_csv(file = "accel_data/accel_data.csv") %>%
+ accel_data = read_csv(file = "accel_data/accel_data.csv") %>%
   janitor::clean_names()  %>% 
   mutate(
     weekday_weekend = case_when(
@@ -54,27 +54,30 @@ accel_data = read_csv(file = "accel_data/accel_data.csv") %>%
   select(., week, day_id, day, weekday_weekend, everything())  %>%
   mutate(., total_activity = rowSums(.[5:1443], na.rm = TRUE)) %>% 
   select(., week, day_id, day, weekday_weekend, total_activity, everything())
-```
-```{r}
+
+
 accel_table = accel_data %>% 
   group_by(accel_data$day_id, accel_data$total_activity) %>% 
   summarize(
   )
-
+accel_table
+  
+```
+There are `r nrow(accel_data)` observations. The variables are week, day_id, day, weekday_weekend, total_activity, and from activity_1 to activity_1440. The dimension is `r ncol(accel_data)` * `r nrow(accel_data)`. The score during most of days are high, but there are two days with really low scores. 
+```{r}
+accel_data1 = pivot_longer(accel_data, activity_1:activity_1440, names_to = "activity_minutes", 
+                           values_to = "score", names_prefix = "activity_") %>% 
+  mutate(., activity_minutes = as.numeric(activity_minutes))
   
 ```
 
 ```{r}
-accel_data1 = pivot_longer(accel_data, activity_1:activity_1440, names_to = "activity_types", 
-                           values_to = "score")  
-  
-```
+plot = accel_data1  %>% 
+  ggplot(aes(x = activity_minutes, y = score, color = day)) + geom_line() + labs(title = "a 24-hour day physical activity", x = "time", y = "score", caption = "Data from the accel data") + scale_x_continuous(breaks = c(0, 360, 720, 1080, 1440), labels =  c("12am", "6am", "12pm", "6pm", "11:59pm"), limits = c(0, 1440))
 
-```{r}
-plot = ggplot(accel_data1, aes(x = activity_types, y = score, color = day)) + geom_point(alpha = .5) +
-geom_line()
 ```
-
+People in the study have the better performance of the physical activity during the beginning
+and the later time of the day.
 ```{r}
 devtools::install_github("p8105/p8105.datasets", force = TRUE)
 
@@ -97,7 +100,7 @@ nynoaadat_data = ny_noaa %>%
   
   
 ```
-
+The size is `r ncol(nynoaadat_data)` * `r nrow(nynoaadat_data)`. The key variables are id, year, month, day, prcp, snow, snwd, tmax, and tmin. The missing data of prcp is `r mean(is.na(nynoaadat_data$prcp))`. The missing data of snow is `r mean(is.na(nynoaadat_data$snow))`. The missing data of snwd is `r mean(is.na(nynoaadat_data$snwd))`. The missing data of tmax is `r mean(is.na(nynoaadat_data$tmax))`. The missing data of tmin is `r mean(is.na(nynoaadat_data$tmin))`.
 ```{r}
 nynoaadat_data1 = select(nynoaadat_data, id, year, month, tmax) %>% 
   filter(month == "01") %>% 
@@ -112,13 +115,13 @@ nynoaadat_data1 = select(nynoaadat_data, id, year, month, tmax) %>%
   summarize(
     tmax_mean=mean(tmax)
   )               %>%
-  ggplot(aes(x=year,y=tmax_mean))+geom_point(color = "pink") +
+  ggplot(aes(x=year,y=tmax_mean))+geom_point(color = "pink") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   labs(
     title = "Temperature plot",
     x = "year",
-    y = "average maximum temperature",
+    y = "average maximum temperature in January",
     caption = "Data from RNOAA"
-  )
+  ) 
  
 ```
 
@@ -135,18 +138,19 @@ nynoaadat_data2 = select(nynoaadat_data, id, year, month, tmax) %>%
   summarize(
     tmax_mean=mean(tmax)
   )               %>%
-  ggplot(aes(x=year,y=tmax_mean))+geom_point(color = "purple") +
+  ggplot(aes(x=year,y=tmax_mean))+geom_point(color = "purple") +  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   labs(
     title = "Temperature plot",
     x = "year",
-    y = "average maximum temperature",
+    y = "average maximum temperature in July",
     caption = "Data from RNOAA"
   )
 ```
 ```{r}
 pic1 + pic2
 ```
-  
+
+For snowfall, the most commonly observed values are `r names(which.max(table(nynoaadat_data$snow)))`, because the probability of snow occuring is low. The overall trend is that the maximal temperature in July is higher than that in January. Also, the range of the maximal temperature in July is smaller than that in January. It's obvious that there are more outliers in January than July.  
 ```{r}
 part1 = nynoaadat_data %>% 
   ggplot(aes(x = tmin, y = tmax)) + 
